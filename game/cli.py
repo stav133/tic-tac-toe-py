@@ -26,7 +26,9 @@ def main():
 				raise ValueError(f"idx {i}: digit must be {i+1}, but not {v}")
 
 		return True
+
 	    
+	# keep in cli as is
 	def print_field(xo: list):
 		print("+-----+-----+-----+")
 		print("|-", xo[0], "-|-", xo[1], "-|-", xo[2], "-|")
@@ -35,6 +37,7 @@ def main():
 		print("+-----+-----+-----+")
 
 
+	# keep in cli as is
 	def change_side(player):
 		# check that player has correct value (X or O)
 		if not player in ('X', 'O'):
@@ -48,28 +51,43 @@ def main():
 			return player
 
 
-	def make_a_move (player, xo:list):
+	
+	def read_move_input (player: str) -> str:
+		move_s = input("Type your choice: ").strip() 
+		return move_s
+		
+		
+	def parse_and_validate_move (move_s: str, xo:list) -> int | None:
+		if move_s.isdigit():
+			move = int(move_s)
+			if move in xo:
+				return move
+			return None
+			
+	
+	def apply_move (xo: list, move: int, player: str) -> None:
+		xo[move-1] = player
+
+
+	def make_a_move (player: str, xo:list):
 		# check that player has correct value (X or O)
-		if not player in ('X', 'O'):
+		if player not in ('X', 'O'):
 			print("Field PLAYER in funtion make_a_move has incorrect value")
 			return
 		print(player, "moves")
 			
-		move_correctness_flag = False
-		while not move_correctness_flag:
-			move_s = input("Type your choice: ").strip() 
-			# to cut the move_s string from spaces and other invisible symbols
-			if move_s.isdigit() and int(move_s) in xo:
-				# to check that move_s is digit and is inside the xo list
-				move = int(move_s)
-				xo[move - 1] = player
-				move_correctness_flag = True
-				return xo
-			else:
+		while True:
+			move_s = read_move_input(player)
+			move = parse_and_validate_move(move_s, xo)
+			if move is not None:
+				apply_move (xo, move, player)
+				return xo, move
+			else:		
 				print("incorrect input data. Please try again")
 				print(player, "still moves")
-			
-			
+
+
+	
 	def check_win (xo: list):
 		check_win_flag = 0
 		check_win_flag_external = False
@@ -105,23 +123,44 @@ def main():
 		return check_win_flag_external
 
 	
+#	def update_xo_with_counter(xo:list, saver):
+	
+	
+	THRESHOLD = 5
+	counter = 1
+	saver = [999] * THRESHOLD
+	move = 999
+	
 	while not check_win_flag:
 		try:
 			validate_xo(xo_field)
 		except (TypeError, ValueError) as e:
 			print("Error while trying print field: ", e)
 		
+		print("Move: ", counter)
 		print_field(xo_field)
-		xo_field = make_a_move(player, xo_field)
+		xo_field, move = make_a_move(player, xo_field)
 
 		try:
 			validate_xo(xo_field)
 		except (TypeError, ValueError) as e:
 			print("Error while trying print field: ", e)
 
-		print_field(xo_field)	
-		check_win_flag = check_win(xo_field)
-		player = change_side(player)
 		
-	
+		check_win_flag = check_win(xo_field)
+		
+		if check_win_flag:
+			print_field(xo_field)
+		else:
+			if counter > THRESHOLD:
+				xo_field[saver[0]-1] = saver[0]
+				for i in range(0, THRESHOLD-1, 1):
+					saver[i] = saver[i+1]
+				saver[THRESHOLD-1] = move
+			if counter <= THRESHOLD:
+				saver[counter-1] = move
+					
+			player = change_side(player)
+			
+			counter = counter + 1
 
