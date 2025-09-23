@@ -4,7 +4,7 @@ def main():
 	winner = 'NOBODY'
 	player = 'X'
 
-	xo_field = xo_field_initial
+	xo_field = xo_field_initial.copy()
 
 	def validate_xo(xo):
 		# to check that xo is list type
