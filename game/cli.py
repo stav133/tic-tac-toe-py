@@ -3,7 +3,8 @@ def main():
 	check_win_flag = False
 	winner = 'NOBODY'
 	player = 'X'
-
+	
+	#added
 	xo_field = xo_field_initial.copy()
 
 	def validate_xo(xo):
@@ -94,7 +95,7 @@ def main():
 		winner = 'NOBODY'
 		xo_field_full = ['X', 'O']
 		#check rows
-		for i in range(0,6,3):
+		for i in range(0,9,3):
 			if xo[i] == xo[i+1] and xo[i+1] == xo[i+2]:
 				check_win_flag = 1
 				winner = xo[i]
