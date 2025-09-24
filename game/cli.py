@@ -61,9 +61,10 @@ def main():
 	def parse_and_validate_move (move_s: str, xo:list) -> int | None:
 		if move_s.isdigit():
 			move = int(move_s)
-			if move in xo:
-				return move
-			return None
+			if 1 <= move <= 9:
+				if isinstance(xo[move - 1], int):
+					return move
+		return None
 			
 	
 	def apply_move (xo: list, move: int, player: str) -> None:
